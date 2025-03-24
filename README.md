@@ -1,1 +1,1 @@
-"# Bloom-Botanica-Shopping-App" 
+"# Bloom-Botanica-Shopping-App Using MERN Stack" 
