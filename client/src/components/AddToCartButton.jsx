@@ -83,23 +83,36 @@ const AddToCartButton = ({ data }) => {
     }
     return (
         <div className='w-full max-w-[150px]'>
-            {
-                isAvailableCart ? (
-                    <div className='flex w-full h-full'>
-                        <button onClick={decreaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-1 rounded flex items-center justify-center'><FaMinus /></button>
+  {
+    isAvailableCart ? (
+      <div className='flex w-full h-full gap-1'>
+        <button
+          onClick={decreaseQty}
+          className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white flex-1 p-1 rounded flex items-center justify-center transition-colors'
+        >
+          <FaMinus />
+        </button>
 
-                        <p className='flex-1 w-full font-semibold px-1 flex items-center justify-center'>{qty}</p>
+        <p className='flex-1 font-semibold px-1 flex items-center justify-center'>{qty}</p>
 
-                        <button onClick={increaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-1 rounded flex items-center justify-center'><FaPlus /></button>
-                    </div>
-                ) : (
-                    <button onClick={handleADDTocart} className='bg-green-600 hover:bg-green-700 text-white px-2 lg:px-4 py-1 rounded'>
-                        {loading ? <Loading /> : "Add"}
-                    </button>
-                )
-            }
+        <button
+          onClick={increaseQty}
+          className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white flex-1 p-1 rounded flex items-center justify-center transition-colors'
+        >
+          <FaPlus />
+        </button>
+      </div>
+    ) : (
+      <button
+        onClick={handleADDTocart}
+        className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white px-2 lg:px-4 py-1 rounded transition-colors w-full'
+      >
+        {loading ? <Loading /> : "Add"}
+      </button>
+    )
+  }
+</div>
 
-        </div>
     )
 }
 
