@@ -32,10 +32,10 @@ const Register = () => {
     const valideValue = Object.values(data).every(el => el)
 
 
-    const handleSubmit = async(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if(data.password !== data.confirmPassword){
+        if (data.password !== data.confirmPassword) {
             toast.error(
                 "password and confirm password must be same"
             )
@@ -45,20 +45,20 @@ const Register = () => {
         try {
             const response = await Axios({
                 ...SummaryApi.register,
-                data : data
+                data: data
             })
-            
-            if(response.data.error){
+
+            if (response.data.error) {
                 toast.error(response.data.message)
             }
 
-            if(response.data.success){
+            if (response.data.success) {
                 toast.success(response.data.message)
                 setData({
-                    name : "",
-                    email : "",
-                    password : "",
-                    confirmPassword : ""
+                    name: "",
+                    email: "",
+                    password: "",
+                    confirmPassword: ""
                 })
                 navigate("/login")
             }
@@ -73,7 +73,11 @@ const Register = () => {
     return (
         <section className='w-full container mx-auto px-2'>
             <div className='bg-white my-4 w-full max-w-lg mx-auto rounded p-7'>
-                <p>Welcome to Bloom Botanica</p>
+                <p className='text-center font-semibold'>
+                    Welcome to <span style={{ color: "#00af4f" }}>Bloom</span><span style={{ color: "#de7301" }}>Botanica</span>
+                </p>
+                <p className='text-center font-semibold'>Register</p>
+
 
                 <form className='grid gap-4 mt-6' onSubmit={handleSubmit}>
                     <div className='grid gap-1'>
@@ -107,7 +111,7 @@ const Register = () => {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 id='password'
-                                className='w-full outline-none'
+                                className='w-full outline-none bg-green-50'
                                 name='password'
                                 value={data.password}
                                 onChange={handleChange}
@@ -130,7 +134,7 @@ const Register = () => {
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
                                 id='confirmPassword'
-                                className='w-full outline-none'
+                                className='w-full outline-none bg-green-50'
                                 name='confirmPassword'
                                 value={data.confirmPassword}
                                 onChange={handleChange}
@@ -148,7 +152,7 @@ const Register = () => {
                         </div>
                     </div>
 
-                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
+                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"}    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
 
                 </form>
 

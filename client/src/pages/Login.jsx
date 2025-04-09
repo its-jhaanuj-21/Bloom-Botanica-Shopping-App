@@ -33,30 +33,30 @@ const Login = () => {
     const valideValue = Object.values(data).every(el => el)
 
 
-    const handleSubmit = async(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         try {
             const response = await Axios({
                 ...SummaryApi.login,
-                data : data
+                data: data
             })
-            
-            if(response.data.error){
+
+            if (response.data.error) {
                 toast.error(response.data.message)
             }
 
-            if(response.data.success){
+            if (response.data.success) {
                 toast.success(response.data.message)
-                localStorage.setItem('accesstoken',response.data.data.accesstoken)
-                localStorage.setItem('refreshToken',response.data.data.refreshToken)
+                localStorage.setItem('accesstoken', response.data.data.accesstoken)
+                localStorage.setItem('refreshToken', response.data.data.refreshToken)
 
                 const userDetails = await fetchUserDetails()
                 dispatch(setUserDetails(userDetails.data))
 
                 setData({
-                    email : "",
-                    password : "",
+                    email: "",
+                    password: "",
                 })
                 navigate("/")
             }
@@ -71,6 +71,10 @@ const Login = () => {
     return (
         <section className='w-full container mx-auto px-2'>
             <div className='bg-white my-4 w-full max-w-lg mx-auto rounded p-7'>
+                <p className='text-center font-semibold'>
+                    Welcome to <span style={{ color: "#00af4f" }}>Bloom</span><span style={{ color: "#de7301" }}>Botanica</span>
+                </p>
+                <p className='text-center font-semibold'>Login</p>
 
                 <form className='grid gap-4 py-4' onSubmit={handleSubmit}>
                     <div className='grid gap-1'>
@@ -91,7 +95,7 @@ const Login = () => {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 id='password'
-                                className='w-full outline-none'
+                                className='w-full outline-none bg-green-50'
                                 name='password'
                                 value={data.password}
                                 onChange={handleChange}
@@ -109,8 +113,8 @@ const Login = () => {
                         </div>
                         <Link to={"/forgot-password"} className='block ml-auto hover:text-primary-200'>Forgot password ?</Link>
                     </div>
-    
-                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Login</button>
+
+                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"}    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Login</button>
 
                 </form>
 
