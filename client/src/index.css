@@ -26,3 +26,13 @@ body{
 .scrollbarCustom::-webkit-scrollbar-thumb{
     @apply bg-blue-100 rounded-full
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: 0 0 0px 1000px #ecfdf5 inset !important; /* Tailwind green-50 */
+  background-color: #ecfdf5 !important;
+}
