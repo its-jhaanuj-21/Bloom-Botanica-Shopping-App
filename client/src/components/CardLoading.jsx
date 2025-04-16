@@ -1,26 +1,22 @@
-import React from 'react'
+import React from 'react';
 
 const CardLoading = () => {
   return (
-    <div className='border py-2 lg:p-4 grid gap-1 lg:gap-3 min-w-36 lg:min-w-52 rounded cursor-pointer bg-white animate-pulse'>
-      <div className='min-h-24 bg-green-50 rounded'>
+    <div className="border py-2 lg:p-4 grid gap-1 lg:gap-3 min-w-36 lg:min-w-52 rounded cursor-pointer bg-white animate-pulse">
+      <div className="min-h-20 w-full max-h-24 lg:max-h-32 rounded bg-green-50" />
+      
+      <div className="h-4 lg:h-5 w-24 rounded bg-green-50 mx-2 lg:mx-0" />
+      
+      <div className="h-4 lg:h-5 w-full rounded bg-green-50 mx-2 lg:mx-0" />
+      
+      <div className="h-4 lg:h-5 w-16 rounded bg-green-50 mx-2 lg:mx-0" />
+      
+      <div className="flex items-center justify-between gap-3 mx-2 lg:mx-0">
+        <div className="h-4 lg:h-5 w-20 rounded bg-green-50" />
+        <div className="h-4 lg:h-5 w-20 rounded bg-green-50" />
       </div>
-      <div className='p-2 lg:p-3  bg-green-50 rounded w-20'>
-      </div>
-      <div className='p-2 lg:p-3 bg-green-50 rounded'>
-      </div>
-      <div className='p-2 lg:p-3 bg-green-50 rounded w-14'>
-      </div>
-
-      <div className='flex items-center justify-between gap-3'>
-        <div className='p-2 lg:p-3 bg-green-50 rounded w-20'>
-        </div>
-        <div className='p-2 lg:p-3 bg-green-50 rounded w-20'>
-        </div>
-      </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default CardLoading
+export default React.memo(CardLoading);
