@@ -18,7 +18,7 @@ const WishlistButton = ({ productId }) => {
 
   return (
     <button onClick={toggleWishlist} className='text-xl'>
-      {isWishlisted ? <FaHeart className='text-red-500' /> : <FaRegHeart />}
+      {isWishlisted ? <FaHeart className='text-green-500' /> : <FaRegHeart />}
     </button>
   );
 };
