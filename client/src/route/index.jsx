@@ -1,131 +1,226 @@
+import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
-import Home from "../pages/Home";
-import SearchPage from "../pages/SearchPage";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import ForgotPassword from "../pages/ForgotPassword";
-import OtpVerification from "../pages/OtpVerification";
-import ResetPassword from "../pages/ResetPassword";
-import UserMenuMobile from "../pages/UserMenuMobile";
-import Dashboard from "../layouts/Dashboard";
-import Profile from "../pages/Profile";
-import MyOrders from "../pages/MyOrders";
-import Address from "../pages/Address";
-import CategoryPage from "../pages/CategoryPage";
-import SubCategoryPage from "../pages/SubCategoryPage";
-import UploadProduct from "../pages/UploadProduct";
-import ProductAdmin from "../pages/ProductAdmin";
-import AdminPermision from "../layouts/AdminPermision";
-import ProductListPage from "../pages/ProductListPage";
-import ProductDisplayPage from "../pages/ProductDisplayPage";
-import CartMobile from "../pages/CartMobile";
-import CheckoutPage from "../pages/CheckoutPage";
-import Success from "../pages/Success";
-import Cancel from "../pages/Cancel";
+
+// Lazy load components
+const App = lazy(() => import("../App"));
+const Home = lazy(() => import("../pages/Home"));
+const SearchPage = lazy(() => import("../pages/SearchPage"));
+const Login = lazy(() => import("../pages/Login"));
+const Register = lazy(() => import("../pages/Register"));
+const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const OtpVerification = lazy(() => import("../pages/OtpVerification"));
+const ResetPassword = lazy(() => import("../pages/ResetPassword"));
+const UserMenuMobile = lazy(() => import("../pages/UserMenuMobile"));
+const Dashboard = lazy(() => import("../layouts/Dashboard"));
+const Profile = lazy(() => import("../pages/Profile"));
+const MyOrders = lazy(() => import("../pages/MyOrders"));
+const Address = lazy(() => import("../pages/Address"));
+const CategoryPage = lazy(() => import("../pages/CategoryPage"));
+const SubCategoryPage = lazy(() => import("../pages/SubCategoryPage"));
+const UploadProduct = lazy(() => import("../pages/UploadProduct"));
+const ProductAdmin = lazy(() => import("../pages/ProductAdmin"));
+const AdminPermision = lazy(() => import("../layouts/AdminPermision"));
+const ProductListPage = lazy(() => import("../pages/ProductListPage"));
+const ProductDisplayPage = lazy(() => import("../pages/ProductDisplayPage"));
+const CartMobile = lazy(() => import("../pages/CartMobile"));
+const CheckoutPage = lazy(() => import("../pages/CheckoutPage"));
+const Success = lazy(() => import("../pages/Success"));
+const Cancel = lazy(() => import("../pages/Cancel"));
 
 const router = createBrowserRouter([
     {
-        path : "/",
-        element : <App/>,
-        children : [
+        path: "/",
+        element: (
+            <Suspense fallback={<div>Loading...</div>}>
+                <App />
+            </Suspense>
+        ),
+        children: [
             {
-                path : "",
-                element : <Home/>
+                path: "",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <Home />
+                    </Suspense>
+                ),
             },
             {
-                path : "search",
-                element : <SearchPage/>
+                path: "search",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <SearchPage />
+                    </Suspense>
+                ),
             },
             {
-                path : 'login',
-                element : <Login/>
+                path: 'login',
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <Login />
+                    </Suspense>
+                ),
             },
             {
-                path : "register",
-                element : <Register/>
+                path: "register",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <Register />
+                    </Suspense>
+                ),
             },
             {
-                path : "forgot-password",
-                element : <ForgotPassword/>
+                path: "forgot-password",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <ForgotPassword />
+                    </Suspense>
+                ),
             },
             {
-                path : "verification-otp",
-                element : <OtpVerification/>
+                path: "verification-otp",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <OtpVerification />
+                    </Suspense>
+                ),
             },
             {
-                path : "reset-password",
-                element : <ResetPassword/>
+                path: "reset-password",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <ResetPassword />
+                    </Suspense>
+                ),
             },
             {
-                path : "user",
-                element : <UserMenuMobile/>
+                path: "user",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <UserMenuMobile />
+                    </Suspense>
+                ),
             },
             {
-                path : "dashboard",
-                element : <Dashboard/>,
-                children : [
+                path: "dashboard",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <Dashboard />
+                    </Suspense>
+                ),
+                children: [
                     {
-                        path : "profile",
-                        element : <Profile/>
+                        path: "profile",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <Profile />
+                            </Suspense>
+                        ),
                     },
                     {
-                        path : "myorders",
-                        element : <MyOrders/>
+                        path: "myorders",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <MyOrders />
+                            </Suspense>
+                        ),
                     },
                     {
-                        path : "address",
-                        element : <Address/>
+                        path: "address",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <Address />
+                            </Suspense>
+                        ),
                     },
                     {
-                        path : 'category',
-                        element : <AdminPermision><CategoryPage/></AdminPermision>
+                        path: 'category',
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <AdminPermision><CategoryPage /></AdminPermision>
+                            </Suspense>
+                        ),
                     },
                     {
-                        path : "subcategory",
-                        element : <AdminPermision><SubCategoryPage/></AdminPermision>
+                        path: "subcategory",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <AdminPermision><SubCategoryPage /></AdminPermision>
+                            </Suspense>
+                        ),
                     },
                     {
-                        path : 'upload-product',
-                        element : <AdminPermision><UploadProduct/></AdminPermision>
+                        path: 'upload-product',
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <AdminPermision><UploadProduct /></AdminPermision>
+                            </Suspense>
+                        ),
                     },
                     {
-                        path : 'product',
-                        element : <AdminPermision><ProductAdmin/></AdminPermision>
+                        path: 'product',
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <AdminPermision><ProductAdmin /></AdminPermision>
+                            </Suspense>
+                        ),
                     }
-                ]
+                ],
             },
             {
-                path : ":category",
-                children : [
+                path: ":category",
+                children: [
                     {
-                        path : ":subCategory",
-                        element : <ProductListPage/>
+                        path: ":subCategory",
+                        element: (
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <ProductListPage />
+                            </Suspense>
+                        ),
                     }
-                ]
+                ],
             },
             {
-                path : "product/:product",
-                element : <ProductDisplayPage/>
+                path: "product/:product",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <ProductDisplayPage />
+                    </Suspense>
+                ),
             },
             {
-                path : 'cart',
-                element : <CartMobile/>
+                path: 'cart',
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <CartMobile />
+                    </Suspense>
+                ),
             },
             {
-                path : "checkout",
-                element : <CheckoutPage/>
+                path: "checkout",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <CheckoutPage />
+                    </Suspense>
+                ),
             },
             {
-                path : "success",
-                element : <Success/>
+                path: "success",
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <Success />
+                    </Suspense>
+                ),
             },
             {
-                path : 'cancel',
-                element : <Cancel/>
+                path: 'cancel',
+                element: (
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <Cancel />
+                    </Suspense>
+                ),
             }
-        ]
+        ],
     }
-])
+]);
 
-export default router
+export default router;

@@ -1,161 +1,199 @@
-import React, { useState } from 'react'
-import { useGlobalContext } from '../provider/GlobalProvider'
-import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees'
-import AddAddress from '../components/AddAddress'
-import { useSelector } from 'react-redux'
-import AxiosToastError from '../utils/AxiosToastError'
-import Axios from '../utils/Axios'
-import SummaryApi from '../common/SummaryApi'
-import toast from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
-import { loadStripe } from '@stripe/stripe-js'
+import React, { useEffect, useState } from 'react';
+import { useGlobalContext } from '../provider/GlobalProvider';
+import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees';
+import AddAddress from '../components/AddAddress';
+import { useSelector } from 'react-redux';
+import AxiosToastError from '../utils/AxiosToastError';
+import Axios from '../utils/Axios';
+import SummaryApi from '../common/SummaryApi';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
 
 const CheckoutPage = () => {
-  const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem,fetchOrder } = useGlobalContext()
-  const [openAddress, setOpenAddress] = useState(false)
-  const addressList = useSelector(state => state.addresses.addressList)
-  const [selectAddress, setSelectAddress] = useState(0)
-  const cartItemsList = useSelector(state => state.cartItem.cart)
-  const navigate = useNavigate()
+  const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchOrder } = useGlobalContext();
+  const [openAddress, setOpenAddress] = useState(false);
+  const [selectAddress, setSelectAddress] = useState(null);
+  const [addressLoading, setAddressLoading] = useState(true);
+  const [addressListState, setAddressListState] = useState([]);
+  const cartItemsList = useSelector((state) => state.cartItem.cart);
+  const navigate = useNavigate();
+  const reduxAddressList = useSelector((state) => state.addresses.addressList);
 
-  const handleCashOnDelivery = async() => {
-      try {
-          const response = await Axios({
-            ...SummaryApi.CashOnDeliveryOrder,
-            data : {
-              list_items : cartItemsList,
-              addressId : addressList[selectAddress]?._id,
-              subTotalAmt : totalPrice,
-              totalAmt :  totalPrice,
-            }
-          })
+  useEffect(() => {
+    // Simulating fetch delay if redux already populated
+    setAddressLoading(true);
+    const timeout = setTimeout(() => {
+      setAddressListState(reduxAddressList);
+      setAddressLoading(false);
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, [reduxAddressList]);
 
-          const { data : responseData } = response
-
-          if(responseData.success){
-              toast.success(responseData.message)
-              if(fetchCartItem){
-                fetchCartItem()
-              }
-              if(fetchOrder){
-                fetchOrder()
-              }
-              navigate('/success',{
-                state : {
-                  text : "Order"
-                }
-              })
-          }
-
-      } catch (error) {
-        AxiosToastError(error)
-      }
-  }
-
-  const handleOnlinePayment = async()=>{
-    try {
-        toast.loading("Loading...")
-        const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY
-        const stripePromise = await loadStripe(stripePublicKey)
-       
-        const response = await Axios({
-            ...SummaryApi.payment_url,
-            data : {
-              list_items : cartItemsList,
-              addressId : addressList[selectAddress]?._id,
-              subTotalAmt : totalPrice,
-              totalAmt :  totalPrice,
-            }
-        })
-
-        const { data : responseData } = response
-
-        stripePromise.redirectToCheckout({ sessionId : responseData.id })
-        
-        if(fetchCartItem){
-          fetchCartItem()
-        }
-        if(fetchOrder){
-          fetchOrder()
-        }
-    } catch (error) {
-        AxiosToastError(error)
+  const handleCashOnDelivery = async () => {
+    if (selectAddress === null || !addressListState[selectAddress]) {
+      return toast.error('Please select a valid address');
     }
-  }
+
+    try {
+      const response = await Axios({
+        ...SummaryApi.CashOnDeliveryOrder,
+        data: {
+          list_items: cartItemsList,
+          addressId: addressListState[selectAddress]._id,
+          subTotalAmt: totalPrice,
+          totalAmt: totalPrice,
+        },
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        fetchCartItem?.();
+        fetchOrder?.();
+        navigate('/success', { state: { text: 'Order' } });
+      }
+    } catch (error) {
+      AxiosToastError(error);
+    }
+  };
+
+  const handleOnlinePayment = async () => {
+    if (selectAddress === null || !addressListState[selectAddress]) {
+      return toast.error('Please select a valid address');
+    }
+
+    const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+    const stripePromise = await loadStripe(stripePublicKey);
+
+    toast.promise(
+      Axios({
+        ...SummaryApi.payment_url,
+        data: {
+          list_items: cartItemsList,
+          addressId: addressListState[selectAddress]._id,
+          subTotalAmt: totalPrice,
+          totalAmt: totalPrice,
+        },
+      }),
+      {
+        loading: 'Redirecting to payment...',
+        success: async (response) => {
+          await stripePromise.redirectToCheckout({ sessionId: response.data.id });
+          fetchCartItem?.();
+          fetchOrder?.();
+          return 'Redirected to Stripe';
+        },
+        error: (err) => AxiosToastError(err),
+      }
+    );
+  };
+
   return (
-    <section className='bg-green-50'>
-      <div className='container mx-auto p-4 flex flex-col lg:flex-row w-full gap-5 justify-between'>
+    <section className='bg-green-50 min-h-screen overflow-y-auto overflow-x-hidden'>
+      <div className='container mx-auto p-4 flex flex-col lg:flex-row gap-5'>
+        {/* Address Selection */}
         <div className='w-full'>
-          {/***address***/}
-          <h3 className='text-lg font-semibold'>Choose your address</h3>
-          <div className='bg-white p-2 grid gap-4'>
-            {
-              addressList.map((address, index) => {
-                return (
-                  <label htmlFor={"address" + index} className={!address.status && "hidden"}>
-                    <div className='border rounded p-3 flex gap-3 hover:bg-green-50'>
-                      <div>
-                        <input id={"address" + index} type='radio' value={index} onChange={(e) => setSelectAddress(e.target.value)} name='address' />
-                      </div>
+          <h3 className='text-lg font-semibold mb-2'>Choose your address</h3>
+          <div className='bg-white p-4 rounded shadow-md space-y-4 min-h-[200px]'>
+            {addressLoading ? (
+              <>
+                {[...Array(2)].map((_, idx) => (
+                  <div key={idx} className='h-20 bg-gray-100 animate-pulse rounded'></div>
+                ))}
+              </>
+            ) : addressListState.length === 0 ? (
+              <p className='text-gray-500 text-center'>No address found. Please add one.</p>
+            ) : (
+              addressListState.map((address, index) => (
+                address.status && (
+                  <label key={address._id} htmlFor={`address${index}`} className='block cursor-pointer'>
+                    <div className={`border rounded p-3 flex gap-3 hover:bg-green-50 ${selectAddress === index ? 'border-green-600' : ''}`}>
+                      <input
+                        type='radio'
+                        id={`address${index}`}
+                        name='address'
+                        value={index}
+                        checked={selectAddress === index}
+                        onChange={() => setSelectAddress(index)}
+                      />
                       <div>
                         <p>{address.address_line}</p>
-                        <p>{address.city}</p>
-                        <p>{address.state}</p>
+                        <p>{address.city}, {address.state}</p>
                         <p>{address.country} - {address.pincode}</p>
-                        <p>{address.mobile}</p>
+                        <p>Mobile: {address.mobile}</p>
                       </div>
                     </div>
                   </label>
                 )
-              })
-            }
-            <div onClick={() => setOpenAddress(true)} className='h-16 bg-green-50 border-2 border-dashed flex justify-center items-center cursor-pointer'>
-              Add address
+              ))
+            )}
+
+            <div
+              onClick={() => setOpenAddress(true)}
+              className='h-16 bg-green-50 border-2 border-dashed flex justify-center items-center cursor-pointer rounded text-green-700 font-medium'
+            >
+              + Add new address
             </div>
           </div>
-
-
-
         </div>
 
-        <div className='w-full max-w-md bg-white py-4 px-2'>
-          {/**summary**/}
-          <h3 className='text-lg font-semibold'>Summary</h3>
-          <div className='bg-white p-4'>
-            <h3 className='font-semibold'>Bill details</h3>
-            <div className='flex gap-4 justify-between ml-1'>
-              <p>Items total</p>
-              <p className='flex items-center gap-2'><span className='line-through text-neutral-400'>{DisplayPriceInRupees(notDiscountTotalPrice)}</span><span>{DisplayPriceInRupees(totalPrice)}</span></p>
+        {/* Order Summary */}
+        <div className='w-full max-w-md bg-white py-4 px-5 rounded shadow-md'>
+          <h3 className='text-lg font-semibold mb-4'>Summary</h3>
+          <div className='space-y-3 text-sm'>
+            <div className='flex justify-between'>
+              <span>Items total</span>
+              <span>
+                <span className='line-through text-gray-400 mr-2'>{DisplayPriceInRupees(notDiscountTotalPrice)}</span>
+                <span>{DisplayPriceInRupees(totalPrice)}</span>
+              </span>
             </div>
-            <div className='flex gap-4 justify-between ml-1'>
-              <p>Quntity total</p>
-              <p className='flex items-center gap-2'>{totalQty} item</p>
+            <div className='flex justify-between'>
+              <span>Quantity</span>
+              <span>{totalQty} item{totalQty > 1 ? 's' : ''}</span>
             </div>
-            <div className='flex gap-4 justify-between ml-1'>
-              <p>Delivery Charge</p>
-              <p className='flex items-center gap-2'>Free</p>
+            <div className='flex justify-between'>
+              <span>Delivery Charge</span>
+              <span>Free</span>
             </div>
-            <div className='font-semibold flex items-center justify-between gap-4'>
-              <p >Grand total</p>
-              <p>{DisplayPriceInRupees(totalPrice)}</p>
+            <div className='flex justify-between font-semibold border-t pt-3'>
+              <span>Grand Total</span>
+              <span>{DisplayPriceInRupees(totalPrice)}</span>
             </div>
           </div>
-          <div className='w-full flex flex-col gap-4'>
-            <button className='py-2 px-4 bg-green-600 hover:bg-green-700 rounded text-white font-semibold' onClick={handleOnlinePayment}>Online Payment</button>
 
-            <button className='py-2 px-4 border-2 border-green-600 font-semibold text-green-600 hover:bg-green-600 hover:text-white' onClick={handleCashOnDelivery}>Cash on Delivery</button>
+          {/* Payment Options */}
+          <div className='mt-6 space-y-3'>
+            <button
+              onClick={handleOnlinePayment}
+              disabled={selectAddress === null || addressLoading}
+              className={`w-full py-2 px-4 font-semibold rounded ${
+                selectAddress === null || addressLoading
+                  ? 'bg-green-200 text-white cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
+            >
+              Pay with Card / UPI
+            </button>
+            <button
+              onClick={handleCashOnDelivery}
+              disabled={selectAddress === null || addressLoading}
+              className={`w-full py-2 px-4 font-semibold rounded border-2 ${
+                selectAddress === null || addressLoading
+                  ? 'border-green-200 text-green-300 cursor-not-allowed'
+                  : 'border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
+              }`}
+            >
+              Cash on Delivery
+            </button>
           </div>
         </div>
       </div>
 
-
-      {
-        openAddress && (
-          <AddAddress close={() => setOpenAddress(false)} />
-        )
-      }
+      {/* Address Modal */}
+      {openAddress && <AddAddress close={() => setOpenAddress(false)} />}
     </section>
-  )
-}
+  );
+};
 
-export default CheckoutPage
+export default CheckoutPage;
