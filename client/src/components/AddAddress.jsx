@@ -188,7 +188,7 @@ const AddAddress = ({ close }) => {
             type="submit"
             className="bg-primary-200 hover:bg-primary-100 w-full py-2 font-semibold mt-4 rounded"
           >
-            Submit
+            Submits
           </button>
         </form>
       </div>
